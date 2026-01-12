@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calculator } from '../types';
+import { Calculator } from '../types.ts';
 
 interface CalculatorCardProps {
   calculator: Calculator;

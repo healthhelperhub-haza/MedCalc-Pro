@@ -1,6 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { CALCULATORS } from "../constants";
+import { CALCULATORS } from "../constants.tsx";
 
 export const getClinicalAdvice = async (query: string) => {
   // Always initialize with named parameter apiKey

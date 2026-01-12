@@ -1,6 +1,6 @@
 
 // Import both Calculator and Specialty types from types.ts
-import { Calculator, Specialty } from './types';
+import { Calculator, Specialty } from './types.ts';
 
 export const CALCULATORS: Calculator[] = [
   {

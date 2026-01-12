@@ -1,10 +1,10 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { CALCULATORS, SPECIALTIES } from './constants';
-import { Calculator, Specialty, Theme } from './types';
-import CalculatorCard from './components/CalculatorCard';
-import CalculatorModal from './components/CalculatorModal';
-import AIAssistant from './components/AIAssistant';
+import { CALCULATORS, SPECIALTIES } from './constants.tsx';
+import { Calculator, Specialty, Theme } from './types.ts';
+import CalculatorCard from './components/CalculatorCard.tsx';
+import CalculatorModal from './components/CalculatorModal.tsx';
+import AIAssistant from './components/AIAssistant.tsx';
 
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { getClinicalAdvice } from '../services/geminiService';
+import { getClinicalAdvice } from '../services/geminiService.ts';
 
 const AIAssistant: React.FC = () => {
   const [query, setQuery] = useState('');

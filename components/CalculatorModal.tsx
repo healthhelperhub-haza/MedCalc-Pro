@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calculator } from '../types';
+import { Calculator } from '../types.ts';
 
 interface CalculatorModalProps {
   calculator: Calculator;
