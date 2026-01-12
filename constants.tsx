@@ -5,6 +5,55 @@ import { Calculator, Specialty } from './types.ts';
 export const CALCULATORS: Calculator[] = [
   // --- DRUG DISPENSING & PHARMACY ---
   {
+    id: 'prescription-formatter',
+    name: 'Prescription Dispensing Assistant',
+    shortName: 'Prescription',
+    specialty: 'Pharmacology',
+    description: 'Calculates total units and formats according to official guidelines: Numeric dose, word frequency, bracketed quantity.',
+    inputs: [
+      { id: 'dose', name: 'Dose per Administration', unit: 'mg/mcg', type: 'number' },
+      { id: 'strength', name: 'Strength per Tablet/Unit', unit: 'mg/mcg', type: 'number', defaultValue: 1 },
+      { id: 'freq_idx', name: 'Frequency', unit: '', type: 'select', options: [
+        { label: 'Once daily', value: 1 },
+        { label: 'Twice daily', value: 2 },
+        { label: 'Three times daily', value: 3 },
+        { label: 'Four times daily', value: 4 },
+        { label: 'Five times daily', value: 5 },
+        { label: 'Six times daily', value: 6 },
+        { label: 'Every 8 hours', value: 33 }, // Special code for wording
+        { label: 'Every 12 hours', value: 22 } // Special code for wording
+      ]},
+      { id: 'duration', name: 'Duration', unit: 'days', type: 'number' }
+    ],
+    formula: (v) => {
+      let freqWord = "";
+      let multiplier = 0;
+
+      // Mapping indices to words and multipliers
+      switch(v.freq_idx) {
+        case 1: freqWord = "once daily"; multiplier = 1; break;
+        case 2: freqWord = "twice daily"; multiplier = 2; break;
+        case 3: freqWord = "three times daily"; multiplier = 3; break;
+        case 4: freqWord = "four times daily"; multiplier = 4; break;
+        case 5: freqWord = "five times daily"; multiplier = 5; break;
+        case 6: freqWord = "six times daily"; multiplier = 6; break;
+        case 33: freqWord = "every eight hours"; multiplier = 3; break;
+        case 22: freqWord = "every twelve hours"; multiplier = 2; break;
+        default: freqWord = "as directed"; multiplier = 1;
+      }
+
+      const unitsPerDose = v.dose / v.strength;
+      const totalUnits = unitsPerDose * multiplier * v.duration;
+      const officialString = `${v.dose} mg ${freqWord} (${Math.ceil(totalUnits)})`;
+
+      return { 
+        value: Math.ceil(totalUnits).toString(), 
+        unit: 'Total Units', 
+        interpretation: `Official Form: ${officialString}` 
+      };
+    }
+  },
+  {
     id: 'standard-dose',
     name: 'Standard Dose (Ordered/On-Hand)',
     shortName: 'Dose Calc',
@@ -173,7 +222,7 @@ export const CALCULATORS: Calculator[] = [
     }
   },
 
-  // --- EXISTING CALCULATORS ---
+  // --- GENERAL CLINICAL ---
   {
     id: 'bmi',
     name: 'Body Mass Index (BMI)',
