@@ -1,5 +1,5 @@
 
-export type Specialty = 'General' | 'Critical Care' | 'Nephrology' | 'Cardiology' | 'Pediatrics' | 'Pharmacology';
+export type Specialty = 'General' | 'Critical Care' | 'Nephrology' | 'Cardiology' | 'Pediatrics' | 'Pharmacology' | 'Gastroenterology' | 'Neurology' | 'Emergency';
 
 export type Theme = 'light' | 'dark' | 'midnight' | 'high-contrast';
 
