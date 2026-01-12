@@ -3,6 +3,177 @@
 import { Calculator, Specialty } from './types.ts';
 
 export const CALCULATORS: Calculator[] = [
+  // --- DRUG DISPENSING & PHARMACY ---
+  {
+    id: 'standard-dose',
+    name: 'Standard Dose (Ordered/On-Hand)',
+    shortName: 'Dose Calc',
+    specialty: 'Pharmacology',
+    description: 'Calculates volume (mL) to administer based on ordered dose and concentration.',
+    inputs: [
+      { id: 'desired', name: 'Ordered Dose', unit: 'mg', type: 'number' },
+      { id: 'have', name: 'On-Hand Dose', unit: 'mg', type: 'number' },
+      { id: 'volume', name: 'On-Hand Volume', unit: 'mL', type: 'number' }
+    ],
+    formula: (v) => {
+      const amount = (v.desired / v.have) * v.volume;
+      return { value: amount.toFixed(2), unit: 'mL', interpretation: 'Volume to dispense/administer.' };
+    }
+  },
+  {
+    id: 'weight-dose',
+    name: 'Weight-Based Dosing (mg/kg)',
+    shortName: 'mg/kg Dose',
+    specialty: 'Pharmacology',
+    description: 'Calculates total dose based on patient weight and mg/kg order.',
+    inputs: [
+      { id: 'weight', name: 'Patient Weight', unit: 'kg', type: 'number' },
+      { id: 'dose_per_kg', name: 'Ordered Dose', unit: 'mg/kg', type: 'number' }
+    ],
+    formula: (v) => {
+      const total = v.weight * v.dose_per_kg;
+      return { value: total.toFixed(1), unit: 'mg', interpretation: 'Total calculated dose.' };
+    }
+  },
+  {
+    id: 'bsa-dose',
+    name: 'BSA-Based Dosing (mg/m²)',
+    shortName: 'mg/m² Dose',
+    specialty: 'Pharmacology',
+    description: 'Calculates total dose based on Body Surface Area (BSA).',
+    inputs: [
+      { id: 'bsa', name: 'Patient BSA', unit: 'm²', type: 'number' },
+      { id: 'dose_per_m2', name: 'Ordered Dose', unit: 'mg/m²', type: 'number' }
+    ],
+    formula: (v) => {
+      const total = v.bsa * v.dose_per_m2;
+      return { value: total.toFixed(1), unit: 'mg', interpretation: 'Total calculated dose.' };
+    }
+  },
+  {
+    id: 'infusion-rate',
+    name: 'Infusion Flow Rate',
+    shortName: 'mL/hr Rate',
+    specialty: 'Pharmacology',
+    description: 'Calculates the mL/hr rate for an IV pump.',
+    inputs: [
+      { id: 'volume', name: 'Total Volume', unit: 'mL', type: 'number' },
+      { id: 'time', name: 'Time (hours)', unit: 'hr', type: 'number' }
+    ],
+    formula: (v) => {
+      const rate = v.volume / v.time;
+      return { value: rate.toFixed(1), unit: 'mL/hr' };
+    }
+  },
+  {
+    id: 'mcg-kg-min',
+    name: 'mcg/kg/min Infusion',
+    shortName: 'mcg/kg/min',
+    specialty: 'Critical Care',
+    description: 'Calculates infusion rate for continuous vasoactive drips.',
+    inputs: [
+      { id: 'dose', name: 'Desired Dose', unit: 'mcg/kg/min', type: 'number' },
+      { id: 'weight', name: 'Weight', unit: 'kg', type: 'number' },
+      { id: 'conc', name: 'Concentration', unit: 'mg/mL', type: 'number' }
+    ],
+    formula: (v) => {
+      // (mcg/kg/min * kg * 60 min/hr) / (conc * 1000 mcg/mg)
+      const rate = (v.dose * v.weight * 60) / (v.conc * 1000);
+      return { value: rate.toFixed(1), unit: 'mL/hr' };
+    }
+  },
+  {
+    id: 'dilution-v1',
+    name: 'Dilution Formula (C1V1 = C2V2)',
+    shortName: 'Dilution',
+    specialty: 'Pharmacology',
+    description: 'Calculate volume of stock solution needed for a specific dilution.',
+    inputs: [
+      { id: 'c2', name: 'Desired Concentration', unit: '%', type: 'number' },
+      { id: 'v2', name: 'Desired Volume', unit: 'mL', type: 'number' },
+      { id: 'c1', name: 'Stock Concentration', unit: '%', type: 'number' }
+    ],
+    formula: (v) => {
+      const v1 = (v.c2 * v.v2) / v.c1;
+      return { value: v1.toFixed(2), unit: 'mL', interpretation: `Use ${v1.toFixed(2)}mL of stock and add ${(v.v2 - v1).toFixed(2)}mL diluent.` };
+    }
+  },
+  {
+    id: 'alligation',
+    name: 'Alligation Alternate',
+    shortName: 'Alligation',
+    specialty: 'Pharmacology',
+    description: 'Mix two strengths to get an intermediate strength.',
+    inputs: [
+      { id: 'high', name: 'Higher Concentration', unit: '%', type: 'number' },
+      { id: 'low', name: 'Lower Concentration', unit: '%', type: 'number' },
+      { id: 'target', name: 'Desired Concentration', unit: '%', type: 'number' },
+      { id: 'total', name: 'Desired Total Volume', unit: 'mL', type: 'number' }
+    ],
+    formula: (v) => {
+      const highParts = v.target - v.low;
+      const lowParts = v.high - v.target;
+      const totalParts = highParts + lowParts;
+      const vHigh = (highParts / totalParts) * v.total;
+      const vLow = (lowParts / totalParts) * v.total;
+      return { value: vHigh.toFixed(1), unit: 'mL High', interpretation: `Mix ${vHigh.toFixed(1)}mL of ${v.high}% with ${vLow.toFixed(1)}mL of ${v.low}%` };
+    }
+  },
+  {
+    id: 'powder-displace',
+    name: 'Reconstitution Displacement',
+    shortName: 'Recon',
+    specialty: 'Pharmacology',
+    description: 'Calculates the volume of powder displacement during reconstitution.',
+    inputs: [
+      { id: 'total_v', name: 'Total Final Volume', unit: 'mL', type: 'number' },
+      { id: 'diluent_v', name: 'Diluent Added', unit: 'mL', type: 'number' }
+    ],
+    formula: (v) => {
+      const displacement = v.total_v - v.diluent_v;
+      return { value: displacement.toFixed(2), unit: 'mL', interpretation: 'Volume of the medication powder itself.' };
+    }
+  },
+  {
+    id: 'mme-calc',
+    name: 'Narcotic Equivalence (MME)',
+    shortName: 'MME',
+    specialty: 'Pharmacology',
+    description: 'Morphine Milligram Equivalents for opioid risk assessment.',
+    inputs: [
+      { id: 'drug', name: 'Opioid Type', unit: '', type: 'select', options: [
+        { label: 'Morphine (1.0)', value: 1.0 },
+        { label: 'Oxycodone (1.5)', value: 1.5 },
+        { label: 'Hydrocodone (1.0)', value: 1.0 },
+        { label: 'Hydromorphone (4.0)', value: 4.0 },
+        { label: 'Codeine (0.15)', value: 0.15 },
+        { label: 'Methadone (4.0)', value: 4.0 }
+      ]},
+      { id: 'dose', name: 'Daily Dose', unit: 'mg', type: 'number' }
+    ],
+    formula: (v) => {
+      const mme = v.drug * v.dose;
+      return { value: mme.toFixed(1), unit: 'MME/day', interpretation: mme >= 50 ? 'High Risk (>50 MME)' : 'Lower Risk' };
+    }
+  },
+  {
+    id: 'remaining-time',
+    name: 'Remaining Infusion Time',
+    shortName: 'Time Left',
+    specialty: 'Pharmacology',
+    description: 'Estimates how long until an IV bag is empty.',
+    inputs: [
+      { id: 'volume', name: 'Remaining Volume', unit: 'mL', type: 'number' },
+      { id: 'rate', name: 'Current Rate', unit: 'mL/hr', type: 'number' }
+    ],
+    formula: (v) => {
+      const hours = Math.floor(v.volume / v.rate);
+      const minutes = Math.round(((v.volume / v.rate) - hours) * 60);
+      return { value: `${hours}h ${minutes}m`, unit: 'remaining', interpretation: 'Estimated time until bag empty.' };
+    }
+  },
+
+  // --- EXISTING CALCULATORS ---
   {
     id: 'bmi',
     name: 'Body Mass Index (BMI)',
@@ -193,7 +364,6 @@ export const CALCULATORS: Calculator[] = [
       { id: 'c', name: 'Creatinine', unit: 'mg/dL', type: 'number' }
     ],
     formula: (v) => {
-      // Standard MELD formula: 3.78*ln[serum bilirubin (mg/dL)] + 11.2*ln[INR] + 9.57*ln[serum creatinine (mg/dL)] + 6.43
       const meld = 3.78 * Math.log(v.b || 1) + 11.2 * Math.log(v.i || 1) + 9.57 * Math.log(v.c || 1) + 6.43;
       return { value: Math.round(meld).toString(), unit: 'Score' };
     }
