@@ -1,0 +1,7 @@
+{
+  "name": "MedCalc Pro",
+  "description": "A comprehensive medical calculator for hospital professionals featuring clinical scoring, drug dosing, and AI-powered diagnostic tool suggestions.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
