@@ -4,7 +4,6 @@ import { CALCULATORS, SPECIALTIES } from './constants.tsx';
 import { Calculator, Specialty, Theme } from './types.ts';
 import CalculatorCard from './components/CalculatorCard.tsx';
 import CalculatorModal from './components/CalculatorModal.tsx';
-import AIAssistant from './components/AIAssistant.tsx';
 
 const App: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,72 +118,63 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-8 space-y-8">
         
-        {/* Left Column: Calculators */}
-        <div className="lg:col-span-8 space-y-8">
-          
-          {/* Filter Chips */}
-          <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+        {/* Filter Chips */}
+        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+          <button
+            onClick={() => setActiveSpecialty('All')}
+            className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
+              activeSpecialty === 'All' 
+              ? 'bg-sky-600 text-white shadow-md' 
+              : theme === 'light' ? 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
+            }`}
+          >
+            All Tools
+          </button>
+          {SPECIALTIES.map(s => (
             <button
-              onClick={() => setActiveSpecialty('All')}
+              key={s}
+              onClick={() => setActiveSpecialty(s)}
               className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
-                activeSpecialty === 'All' 
+                activeSpecialty === s 
                 ? 'bg-sky-600 text-white shadow-md' 
                 : theme === 'light' ? 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
               }`}
             >
-              All Tools
+              {s}
             </button>
-            {SPECIALTIES.map(s => (
-              <button
-                key={s}
-                onClick={() => setActiveSpecialty(s)}
-                className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all ${
-                  activeSpecialty === s 
-                  ? 'bg-sky-600 text-white shadow-md' 
-                  : theme === 'light' ? 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700'
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-
-          {/* Calculator Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredCalculators.length > 0 ? (
-              filteredCalculators.map(calc => (
-                <CalculatorCard
-                  key={calc.id}
-                  calculator={calc}
-                  onClick={() => setSelectedCalc(calc)}
-                />
-              ))
-            ) : (
-              <div className={`col-span-full py-12 text-center rounded-3xl border border-dashed ${
-                theme === 'light' ? 'bg-white border-slate-300' : 'bg-slate-800/50 border-slate-700'
-              }`}>
-                <p className="text-slate-500 font-medium">No calculators match your search.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Warning Footer */}
-          <div className={`p-4 rounded-xl border ${
-            theme === 'light' ? 'bg-orange-50 border-orange-100 text-orange-800' : 'bg-orange-950/20 border-orange-900/50 text-orange-200'
-          }`}>
-            <p className="text-[10px] font-bold uppercase tracking-wider mb-1">Clinical Disclaimer</p>
-            <p className="text-[10px] leading-relaxed opacity-80">
-              These calculators are provided for informational purposes only. Results should not replace professional clinical judgment. 
-              Always verify calculations independently before administering medication or treatments.
-            </p>
-          </div>
+          ))}
         </div>
 
-        {/* Right Column: AI Assistant */}
-        <div className="lg:col-span-4">
-          <AIAssistant />
+        {/* Calculator Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCalculators.length > 0 ? (
+            filteredCalculators.map(calc => (
+              <CalculatorCard
+                key={calc.id}
+                calculator={calc}
+                onClick={() => setSelectedCalc(calc)}
+              />
+            ))
+          ) : (
+            <div className={`col-span-full py-12 text-center rounded-3xl border border-dashed ${
+              theme === 'light' ? 'bg-white border-slate-300' : 'bg-slate-800/50 border-slate-700'
+            }`}>
+              <p className="text-slate-500 font-medium">No calculators match your search.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Warning Footer */}
+        <div className={`p-4 rounded-xl border ${
+          theme === 'light' ? 'bg-orange-50 border-orange-100 text-orange-800' : 'bg-orange-950/20 border-orange-900/50 text-orange-200'
+        }`}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-1">Clinical Disclaimer</p>
+          <p className="text-[10px] leading-relaxed opacity-80">
+            These calculators are provided for informational purposes only. Results should not replace professional clinical judgment. 
+            Always verify calculations independently before administering medication or treatments.
+          </p>
         </div>
       </main>
 
